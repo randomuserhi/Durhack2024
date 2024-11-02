@@ -1,4 +1,4 @@
-﻿namespace Framework {
+﻿namespace Biosphere {
     public abstract class Entity : BufferWriteable {
 #pragma warning disable CS8618
         public Simulation World;
@@ -34,6 +34,17 @@
         public Vec3 direction = Vec3.up;
 
         private static int nextId = 0;
+
+        // Returns the move to apply to current position to move towards a goal
+        // condition is true if the entity can path on a tile
+        // otherwise false
+        //
+        // Always returns a direction of lenght 1 (so (1,1), (0,1) etc...)
+        // 
+        // A* => copy paste no wories gang
+        public Vec3 PathTo(Vec3 goal, Func<Tile, bool> condition) {
+
+        }
 
         public bool IsOccupied(Vec3 vec) {
             return World.IsOccupied(vec) && World.GetTile(vec).planes[vec.plane] != this;

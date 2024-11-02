@@ -1,4 +1,4 @@
-﻿namespace Framework {
+﻿namespace Biosphere {
     public class InvalidNameException : Exception {
         public InvalidNameException() : base("Invalid state name! State does not exist in dict!") {
         }

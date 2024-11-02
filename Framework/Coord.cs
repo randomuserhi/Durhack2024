@@ -1,4 +1,4 @@
-﻿namespace Framework {
+﻿namespace Biosphere {
     public class Coord {
         // Coord is automatically instantiated when an entity is instantiated
         // Plane number refers to a specific plane - refer to Plane enum in the Tile class

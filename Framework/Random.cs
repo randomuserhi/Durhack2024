@@ -1,4 +1,4 @@
-﻿namespace Framework {
+﻿namespace Biosphere {
     public class Rand {
         private static Random rnd = new Random();
 

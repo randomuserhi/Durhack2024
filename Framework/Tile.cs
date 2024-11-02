@@ -1,6 +1,10 @@
-﻿namespace Framework {
+﻿namespace Biosphere {
 
     public class Tile : BufferWriteable {
+        public readonly Vec3 pos;
+
+        public Tile(Vec3 pos) { this.pos = pos; }
+
         // Enum for clearly indexing planes array
         public enum Plane {
             underground = 0,

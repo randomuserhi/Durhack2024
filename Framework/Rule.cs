@@ -1,4 +1,4 @@
-﻿namespace Framework {
+﻿namespace Biosphere {
     public abstract class Rule {
 #pragma warning disable CS8618
         public Simulation World;

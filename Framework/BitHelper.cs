@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace Framework {
+namespace Biosphere {
     public class BitHelperBufferTooLarge : Exception {
         public BitHelperBufferTooLarge(string message) : base(message) { }
     }

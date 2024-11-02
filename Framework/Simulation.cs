@@ -1,4 +1,4 @@
-﻿namespace Framework {
+﻿namespace Biosphere {
     public class Simulation {
         public Dictionary<string, BufferWriteable?> worldStates = new();
 
@@ -20,8 +20,10 @@
             size = this.height * this.width;
             tiles = new Tile[size];
 
-            for (int i = 0; i < tiles.Length; i++) {
-                tiles[i] = new Tile();
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    tiles[y * width + x] = new Tile(new Vec3(x, y, 0));
+                }
             }
         }
 

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace Framework {
+namespace Biosphere {
     public struct Vec3 {
         public int x;
         public int y;
@@ -40,14 +40,19 @@ namespace Framework {
         }
         */
 
+        public Vec3 Norm() {
+            float magnitude = Mag();
+            return new Vec3((int)Math.Round(x / magnitude), (int)Math.Round(y / magnitude), plane);
+        }
 
-        public float Mag(Vec3 vec1) {
-            return (float)Math.Sqrt(MagSqrd(vec1));
+
+        public float Mag() {
+            return (float)Math.Sqrt(MagSqrd());
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int MagSqrd(Vec3 vec1) {
-            return (vec1.x * vec1.x) + (vec1.y * vec1.y) + (vec1.plane * vec1.plane); ;
+        public int MagSqrd() {
+            return (x * x) + (y * y);
         }
     }
 }
