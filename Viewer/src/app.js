@@ -1,6 +1,7 @@
 import { html } from "rhu/html.js";
 import { Style } from "rhu/style.js";
 import { Theme } from "rhu/theme.js";
+import { Display } from "./routes/display/index.js";
 
 export const theme = Theme(({ theme }) => {
     return {
@@ -35,7 +36,9 @@ const style = Style(({ css }) => {
 export const App = (() => {
     return html`
     <div class=${style.wrapper}>
-        <div class=${style.body}></div>
+        <div class=${style.body}>
+            ${Display()}
+        </div>
     </div>
     `;
 })();
