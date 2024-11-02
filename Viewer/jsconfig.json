@@ -1,0 +1,13 @@
+{
+    "compilerOptions": { 
+      "noEmit": true,
+      "target": "es6",
+      "module": "esnext",
+      "baseUrl": "./src",
+      "paths": {
+        "*": ["../@types/*", "../node_modules/fuse.js/dist/*"]
+      }
+    },
+    "include": ["./src/**/*"],
+    "exclude": ["./src/js3party/**/*"]
+  }
