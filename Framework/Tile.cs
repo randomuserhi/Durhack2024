@@ -1,5 +1,29 @@
 ﻿namespace Biosphere {
 
+    public class IntState : BufferWriteable {
+        int value;
+
+        public void Write(ByteBuffer buffer) {
+            BitHelper.WriteBytes(value, buffer);
+        }
+    }
+
+    public class StringState : BufferWriteable {
+        string value;
+
+        public void Write(ByteBuffer buffer) {
+            BitHelper.WriteBytes(value, buffer);
+        }
+    }
+
+    public class FloatState : BufferWriteable {
+        float value;
+
+        public void Write(ByteBuffer buffer) {
+            BitHelper.WriteBytes(value, buffer);
+        }
+    }
+
     public class Tile : BufferWriteable {
         public readonly Vec3 pos;
 
@@ -47,7 +71,6 @@
         // Planes array for storing what entities are on a given plane in a tile. Refer to Plane enum
         public Entity?[] planes = [null, null, null, null];
 
-        // TODO(Alex)
         public void Write(ByteBuffer buffer) {
             BitHelper.WriteBytes(tileStates.Count, buffer);
             foreach (KeyValuePair<string, BufferWriteable?> kvp in tileStates) {

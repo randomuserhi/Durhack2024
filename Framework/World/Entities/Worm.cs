@@ -1,12 +1,12 @@
 ﻿namespace Biosphere {
-    public class Dog : Entity {
+    public class Worm : Entity {
 
         private int staminaCount = 10;
         private Entity? pursuing = null;
 
-        public override string Type => "Dog";
+        public override string Type => "Worm";
 
-        public Dog() : base() {
+        public Worm() : base() {
             state = "wandering";
         }
 

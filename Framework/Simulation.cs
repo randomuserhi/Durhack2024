@@ -116,7 +116,7 @@
             }
 
             foreach (Entity entity in entities) {
-                entity.Update();
+                entity.Step();
             }
             stepCount++;
         }
@@ -145,6 +145,7 @@
                 BitHelper.WriteBytes(entity.id, buffer);
                 BitHelper.WriteBytes(entity.Pos, buffer);
                 BitHelper.WriteBytes(entity.direction, buffer);
+                BitHelper.WriteBytes(entity.state, buffer);
                 BitHelper.WriteBytes(entity, buffer);
             }
 

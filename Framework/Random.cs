@@ -10,7 +10,7 @@
             }
         }
 
-        public static float Int(int lb, int ub) {
+        public static int Int(int lb, int ub) {
             if (lb > ub) {
                 throw new ArgumentException("Lower bound cannot be greater than upper bound!");
             } else {

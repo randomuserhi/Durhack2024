@@ -1,48 +1,52 @@
 ﻿namespace Biosphere {
-    public class Dog : Entity {
+    public class Bird : Entity {
 
-        private int staminaCount = 10;
+        private int staminaCount = 20;
         private Entity? pursuing = null;
 
-        public override string Type => "Dog";
+        public override string Type => "Bird";
 
-        public Dog() : base() {
+        public Bird() : base() {
             state = "wandering";
         }
 
         private void Wandering() {
             --staminaCount;
-            if (staminaCount <= 4) {
-                state = "idle";
-            }
-            delay = 2;
-            Pos += new Vec3(Rand.Int(-1, 2), Rand.Int(-1, 2), 0);
-        }
-
-        private void Resting() {
-            delay = 20;
-            staminaCount = 10;
-        }
-
-        private void Idle() {
-            --staminaCount;
             if (staminaCount <= 0) {
-                state = "resting";
+                state = "seeking";
             }
-            delay = 4;
-            Pos += new Vec3(Rand.Int(-1, 2), Rand.Int(-1, 2), 0);
+            delay = 1;
+            Pos += new Vec3(Rand.Int(-1, 2), Rand.Int(-1, 2), 1);
+        }
+
+        private void Fleeing() {
+            // fleeing if detects a predator. can fly for a bit regardless of energy
+            delay = 1;
+        }
+
+        private void Seeking() {
+            delay = 3;
+            Pos += new Vec3(Rand.Int(-1, 2), Rand.Int(-1, 2), -1);
+            if (Pos.plane == 0) {
+                Pos += Vec3.transcend;
+            }
         }
 
         private void Pursuing() {
-            // a* for chasing
+            // a* for routing to worms
+            delay = 1;
+
+            // if catches worm:
+            state = "wandering";
+            staminaCount = 20;
         }
 
-        private void FindEntity() {
+        private void FindWorm() {
             Entity? closestEntity = null;
             float closestDist = float.PositiveInfinity;
 
             foreach (Entity entity in World.entities) {
-                if (entity.Type == "Dog" || entity.Pos.plane != this.Pos.plane) {
+                if (entity.Type != "Worm" || entity.Pos.plane == 0) {
                     continue;
                 }
 
@@ -55,35 +59,31 @@
                         state = "pursuing";
                     }
 
-                } else if (dist < 5) {
+                } else if (dist < 7) {
                     closestDist = dist;
                     closestEntity = entity;
                     state = "pursuing";
 
                 } else {
-                    if (staminaCount <= 4) {
-                        state = "idle";
-                    } else {
-                        state = "wandering";
-                    }
+                    state = "seeking";
                 }
             }
         }
 
         protected override void Update() {
-            if (state != "resting") {
-                FindEntity();
+            if (state == "seeking") {
+                FindWorm();
             }
 
             switch (state) {
                 case "wandering":
                     Wandering();
                     break;
-                case "resting":
-                    Resting();
+                case "fleeing":
+                    Fleeing();
                     break;
-                case "idle":
-                    Idle();
+                case "seeking":
+                    Seeking();
                     break;
                 case "pursuing":
                     Pursuing();

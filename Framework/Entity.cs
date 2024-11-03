@@ -10,7 +10,19 @@
 
         // Dictionary to represent all the states of a given entity
         // 0 is false, 1 is true
-        public Dictionary<string, object> entityStates = new();
+        private Dictionary<string, object> entityStates = new();
+
+        public string state = "";
+
+        public int delay = 0;
+        private int _delay = 0;
+        public void Step() {
+            if (_delay <= 0) {
+                _delay = delay;
+                Update();
+            }
+            --_delay;
+        }
 
         // id is automatically allocated, and position defaults to (0, 0) on surface
         // default direction is facing north
@@ -89,7 +101,7 @@
         }
 
         // Runs every tick
-        public abstract void Update();
+        protected abstract void Update();
 
         public virtual void Write(ByteBuffer buffer) { }
     }
