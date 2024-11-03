@@ -1,0 +1,63 @@
+<!-- Renderer -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Import style sheet -->
+<link rel="stylesheet" href="default.css">
+
+<head>
+	<meta charset="UTF-8">
+	<base target="_blank">
+	<meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:;">
+
+	<title>Viewer</title>
+</head>
+
+<style>
+    .button {
+        border: none;
+        background-color: #606C38;
+        color: #FEFAE0;
+        padding: 16px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        font-family: serif;
+        margin: 4px 2px;
+        border-radius: 50px;
+        transition-duration: 0.4s;
+        cursor: pointer;
+    }
+    .button:hover {
+        background-color: #DDA15E;
+        color: #FEFAE0;
+    }
+    .divider {
+        color: #606C38;
+        font-size: 2em;
+        font-family: Georgia;
+        display: flex;
+        align-items: center;
+    }
+    .divider::before, .divider::after {
+        flex: 1;
+        content: "";
+        padding: 2px;
+        background-color: #283618;
+        margin: 5px;
+    }
+</style>
+
+<body style="background-color:#FEFAE0;">
+    <h1 style="text-align:center; color:#606C38; font-family:Georgia; font-size:3em;"><b>Biosphere</b></h1>
+    <div style="width:100%; display: flex; align-items: center; justify-content: center;">
+        <div>
+            <button class="button">Create</button>
+        </div>
+    </div>
+    <div class="divider">Gallery</div>
+</body>
+
+</html>
