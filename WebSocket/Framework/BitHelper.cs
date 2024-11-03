@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace Framework {
+namespace Biosphere {
     public class BitHelperBufferTooLarge : Exception {
         public BitHelperBufferTooLarge(string message) : base(message) { }
     }
@@ -41,7 +41,7 @@ namespace Framework {
 
         internal byte[] Shrink() {
             byte[] newArray = new byte[count];
-            global::System.Array.Copy(_array.Array!, _array.Offset, newArray, 0, _array.Count);
+            global::System.Array.Copy(_array.Array!, _array.Offset, newArray, 0, count);
             _array = newArray;
             return newArray;
         }

@@ -7,7 +7,7 @@
 
         public Bird() : base() {
             state = "wandering";
-            energy = 5;
+            energy = 10;
         }
 
         private void Wandering() {
@@ -15,19 +15,23 @@
             if (energy <= 0) {
                 state = "resting";
             }
-            delay = 0;
-            Pos += new Vec3(Rand.Int(-1, 2), Rand.Int(-1, 2), (int)Tile.Plane.sky);
+            delay = 2;
+            Pos += new Vec3(Rand.Int(-1, 2), Rand.Int(-1, 2), 0);
         }
 
         private void Resting() {
-            delay = 15;
-            energy = 5;
-            state = "wandering";
+            delay = 30;
+            energy = 10;
+            nextstate = "wandering";
+            Vec3 temp = Pos;
+            temp.plane = (int)Tile.Plane.surface;
+            Pos = temp;
         }
 
         private Entity? corpse = null;
 
         private void Pursuing() {
+            delay = 2;
             if (corpse != null) {
                 if (TryPathTo(out Vec3 dir, corpse.Pos)) {
                     if (Pos + dir == corpse.Pos) {
@@ -64,7 +68,7 @@
 
         private void Eat() {
             delay = 15;
-            state = "wandering";
+            nextstate = "wandering";
         }
 
         protected override void Update() {
@@ -88,6 +92,9 @@
                 break;
             case "resting":
                 Resting();
+                break;
+            case "pursuing":
+                Pursuing();
                 break;
             case "eat":
                 Eat();

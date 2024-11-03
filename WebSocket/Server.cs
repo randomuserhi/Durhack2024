@@ -1,8 +1,4 @@
-﻿using Framework;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text.Json;
+﻿using Biosphere;
 using WebSocketSharp;
 using WebSocketSharp.Server;
 
@@ -11,76 +7,82 @@ using WebSocketSharp.Server;
 namespace Server {
 
     public class WorldHandler : WebSocketBehavior {
-        private bool running = true;
-        private bool added = false;
-        private int temp = 1;
-        private Simulation world;
-
-        Task? currentTask = null;
-        async Task MainHandler() {
-            while (running) {
-                Send(Server.worldList[Server.clientWorlds[ID]].Serialize());
-                // Get Chris to write bytify
-                // Send(Server.cursorList[Server.clientWorlds[ID]]);
-                Thread.Sleep(1000);
-            }
-        }
-
         protected override void OnOpen() {
             base.OnOpen();
             Console.WriteLine($"New Connection! {ID}");
         }
 
+        private SimulationInstance? instance = null;
+        private async Task Handler() {
+            if (instance == null) return;
+
+            string code = instance.code;
+            SimulationInstance _instance = instance;
+
+            while (instance != null) {
+                await _instance.mutex.WaitAsync();
+                try {
+                    Send(_instance.sim.Serialize());
+                } finally {
+                    _instance.mutex.Release();
+                }
+                Thread.Sleep(100);
+            }
+
+            Console.WriteLine($"{ID} Left World {code}");
+        }
+
         protected override void OnMessage(MessageEventArgs e) {
             // Need to figure out the format of e.data
-            if (e.Type != Opcode.Binary) throw new Exception("ONLY BINARY");
+            if (!e.IsBinary) throw new Exception("ONLY BINARY");
             int i = 0;
 
             string type = BitHelper.ReadString(e.RawData, ref i);
-            // CHRIS WRITE BIT BUFFER READING FOR EACH CASSE PLEASE THANKS UWU
+
             switch (type) {
-                case "get":
+            case "get": {
+                if (instance != null) return;
 
-                    int worldID = BitHelper.ReadInt(e.RawData, ref i);
+                string code = BitHelper.ReadString(e.RawData, ref i);
+                if (!Server.worlds.ContainsKey(code)) {
+                    Simulation sim = new Simulation(20, 20);
 
-                    if (currentTask == null) {
+                    // Generate world...
+                    //sim.AddSystem(new CloudSpawner());
+                    sim.AddSystem(new TreeSpawner());
+                    sim.AddSystem(new BirdSpawner());
+                    sim.AddSystem(new DogSpawner());
 
-                        // Check what the content of the message is - need to examine e.data
-                        if (Server.worldList.ContainsKey(worldID)) {
-                            Server.clientWorlds.Add(ID, worldID);
-                        } else {
-                            while (!added) {
-                                if (!Server.worldList.ContainsKey(temp)) {
-                                    Server.worldList.Add(temp, new Simulation());
-                                    Server.clientWorlds.Add(ID, temp);
-                                    added = true;
-                                } else {
-                                    ++temp;
-                                }
-                            }
-                        }
+                    sim.AddRule(new Fire());
+                    sim.AddRule(new Rain());
 
-                        currentTask = MainHandler();
-                    }
-                    break;
-                case "mutate":
-                    // Need to figure out how data is formatted
-                    // for (int i = 0; i < "Length of data list"; ++i;) {
-                    for (int i = 0; i < 0; ++i) {
-                        //e.data.x e.data.y
-                        // Tile t = Server.worldList[Server.clientWorlds[ID]].GetTile(x, y);
-                        // t.tileStates.clear();
-                        // t.tileStates[] = e.data.states ?
-                    }
+                    Server.worlds.Add(code, sim);
+                    Console.WriteLine($"Created World {code}");
+                }
 
-                    break;
-                case "cursor":
-                    // e.data.x e.data.y
-                    // Server.cursorList[Server.clientWorlds[ID]].Append(e.Data.x);
-                    // Server.cursorList[Server.clientWorlds[ID]].Append(e.Data.y);
+                if (!Server.runningWorlds.ContainsKey(code)) {
+                    SimulationInstance inst = new SimulationInstance(code, Server.worlds[code]);
+                    inst.Start();
+                    Server.runningWorlds.Add(code, inst);
+                    Console.WriteLine($"Started World {code}");
+                }
+
+                instance = Server.runningWorlds[code];
+                lock (instance.refMutex) {
+                    instance.refCount += 1;
+                }
+
+                if (!Server.runningWorlds.ContainsKey(code)) {
+                    instance.Start();
+                    Server.runningWorlds.Add(code, instance);
+                    Console.WriteLine($"Started World {code}");
+                }
+
+                Task.Run(Handler);
+                Console.WriteLine($"{ID} Joined World {code}");
             }
-
-            Console.WriteLine("Received from client: " + e);
+            break;
+            }
         }
 
         protected override void OnError(WebSocketSharp.ErrorEventArgs e) {
@@ -89,49 +91,84 @@ namespace Server {
 
         protected override void OnClose(CloseEventArgs e) {
             base.OnClose(e);
-            Server.clientWorlds.Remove(ID);
 
+            Console.WriteLine($"Closed Connection! {ID}");
+
+            if (instance == null) return;
+            lock (instance.refMutex) {
+                instance.refCount -= 1;
+            }
+            instance = null;
         }
     }
 
-    public class TestServer : WebSocketBehavior {
-        protected override void OnOpen() {
-            base.OnOpen();
-            Console.WriteLine($"New Connection! {ID}");
+    public class SimulationInstance {
+        public readonly SemaphoreSlim mutex = new(1, 1);
+
+        public readonly object refMutex = new();
+        private int _refCount = 0;
+        public int refCount {
+            get {
+                return _refCount;
+            }
+            set {
+                _refCount = value;
+                Console.WriteLine($"World {code} has {_refCount} references.");
+                if (_refCount <= 0) {
+                    Stop();
+                }
+            }
         }
 
-        protected override void OnMessage(MessageEventArgs e) {
-            base.OnMessage(e);
-            if (e.Type != Opcode.Binary) throw new Exception("ONLY BINARY");
-            int i = 0;
+        private bool running = true;
 
-            string type = BitHelper.ReadString(e.RawData, ref i);
-            Vec3 point = BitHelper.ReadVector3(e.RawData, ref i);
+        public readonly Simulation sim;
+        public readonly string code;
+        public SimulationInstance(string code, Simulation sim) {
+            this.code = code;
+            this.sim = sim;
+        }
+
+        private async Task Run() {
+            while (running) {
+                await mutex.WaitAsync();
+                try {
+                    sim.Step();
+                } finally {
+                    mutex.Release();
+                }
+                Thread.Sleep(100);
+            }
+        }
+
+        private Task? current = null;
+        public void Start() {
+            if (current != null) return;
+            current = Task.Run(Run);
+        }
+
+        public void Stop() {
+            if (current == null) return;
+            running = false;
+            current.Wait();
+            current = null;
+            Server.runningWorlds.Remove(code);
+            Console.WriteLine($"Ended World {code}");
         }
     }
-
 
     public class Server {
-
-        // Client ID -> World ID
-        public static Dictionary<string, int> clientWorlds = new Dictionary<string, int>();
-        // World ID -> Simulation Object
-        public static Dictionary<int, Simulation> worldList = new Dictionary<int, Simulation>();
-        // World ID -> Integer array of Cursor Positions
-        public static Dictionary<int, int[]> cursorList = new Dictionary<int, int[]>();
-
         public static WebSocketServer ws = new WebSocketServer("ws://127.0.0.1:8800");
+        public static Dictionary<string, Simulation> worlds = new Dictionary<string, Simulation>();
+        public static Dictionary<string, SimulationInstance> runningWorlds = new Dictionary<string, SimulationInstance>();
 
         static void Main(string[] args) {
-
-            // ws.AddWebSocketService<WorldHandler>("/");
-            ws.AddWebSocketService<TestServer>("/");
+            ws.AddWebSocketService<WorldHandler>("/");
             ws.Start();
 
             Console.ReadKey();
 
             ws.Stop();
-
         }
     }
 }

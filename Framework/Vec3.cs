@@ -34,7 +34,7 @@ namespace Biosphere {
         }
 
         public static bool operator ==(Vec3 a, Vec3 b) {
-            return a.x == b.x && a.y == b.y && a.plane == b.plane;
+            return a.x == b.x && a.y == b.y;
         }
         public static bool operator !=(Vec3 a, Vec3 b) {
             return !(a == b);
@@ -42,11 +42,11 @@ namespace Biosphere {
 
         public override bool Equals(object? obj) => obj is Vec3 other && this.Equals(other);
 
-        public bool Equals(Vec3 p) => x == p.x && y == p.y && plane == p.plane;
+        public bool Equals(Vec3 p) => x == p.x && y == p.y;
 
 
         public override int GetHashCode() {
-            return HashCode.Combine(x, y, plane);
+            return HashCode.Combine(x, y);
         }
 
         /*
@@ -68,7 +68,7 @@ namespace Biosphere {
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int MagSqrd() {
-            return (x * x) + (y * y) + (plane * plane);
+            return (x * x) + (y * y);
         }
     }
 }

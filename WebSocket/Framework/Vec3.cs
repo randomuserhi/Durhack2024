@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace Framework {
-    public struct Vec3 {
+namespace Biosphere {
+    public struct Vec3 : IEquatable<Vec3> {
         public int x;
         public int y;
         public int plane;
@@ -14,7 +14,7 @@ namespace Framework {
         public static Vec3 transcend = new Vec3(0, 0, 1);
         public static Vec3 descend = new Vec3(0, 0, -1);
 
-        public Vec3(int x, int y, int plane) {
+        public Vec3(int x, int y, int plane = 0) {
             this.x = x;
             this.y = y;
             this.plane = plane;
@@ -33,6 +33,22 @@ namespace Framework {
             return new Vec3(vec1.x * multi, vec1.y * multi, vec1.plane * multi);
         }
 
+        public static bool operator ==(Vec3 a, Vec3 b) {
+            return a.x == b.x && a.y == b.y;
+        }
+        public static bool operator !=(Vec3 a, Vec3 b) {
+            return !(a == b);
+        }
+
+        public override bool Equals(object? obj) => obj is Vec3 other && this.Equals(other);
+
+        public bool Equals(Vec3 p) => x == p.x && y == p.y;
+
+
+        public override int GetHashCode() {
+            return HashCode.Combine(x, y);
+        }
+
         /*
         public Vec3 Div(Vec3 vec1, int divi)
         {
@@ -40,14 +56,19 @@ namespace Framework {
         }
         */
 
+        public Vec3 Norm() {
+            float magnitude = Mag();
+            return new Vec3((int)Math.Round(x / magnitude), (int)Math.Round(y / magnitude), plane);
+        }
 
-        public float Mag(Vec3 vec1) {
-            return (float)Math.Sqrt(MagSqrd(vec1));
+
+        public float Mag() {
+            return (float)Math.Sqrt(MagSqrd());
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int MagSqrd(Vec3 vec1) {
-            return (vec1.x * vec1.x) + (vec1.y * vec1.y) + (vec1.plane * vec1.plane); ;
+        public int MagSqrd() {
+            return (x * x) + (y * y);
         }
     }
 }

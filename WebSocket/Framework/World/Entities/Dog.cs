@@ -16,23 +16,24 @@
             if (energy <= 0) {
                 state = "resting";
             }
-            delay = 2;
+            delay = 4;
             Pos += new Vec3(Rand.Int(-1, 2), Rand.Int(-1, 2), 0);
         }
 
         private void Resting() {
             delay = 20;
             energy = 20;
-            state = "wandering";
+            nextstate = "wandering";
         }
 
         private void Pursuing() {
+            delay = 2;
             if (pursuing != null) {
                 if (TryPathTo(out Vec3 dir, pursuing.Pos)) {
                     if (Pos + dir == pursuing.Pos && Pos.plane == pursuing.Pos.plane || Pos.plane == pursuing.Pos.plane - 1) {
                         World.RemoveEntity(pursuing);
                         hunger += 75;
-                        state = "eat";
+                        nextstate = "eat";
                         pursuing = null;
                     }
                     Pos += dir;
@@ -42,7 +43,7 @@
 
         private void Eat() {
             delay = 20;
-            state = "wandering";
+            nextstate = "wandering";
         }
 
         private void FindBird() {

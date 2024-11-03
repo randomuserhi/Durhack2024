@@ -5,9 +5,10 @@
         public Tile[] tiles;
         public List<System> systems = new();
         public List<Rule> rules = new();
-        public List<Entity> entities = new();
-        private List<Entity> _entities = new();
-        private List<(Entity e, Vec3 pos)> queuedEntities = new();
+        public HashSet<Entity> entities = new();
+        private HashSet<Entity> _entities = new();
+        public int[] queuedLocations;
+        private Dictionary<Entity, Vec3> queuedEntities = new();
 
         public readonly int height;
         public readonly int width;
@@ -21,6 +22,7 @@
             this.width = width;
             size = this.height * this.width;
             tiles = new Tile[size];
+            queuedLocations = new int[size];
 
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
@@ -63,7 +65,9 @@
             if (IsOccupied(pos)) {
                 throw new AlreadyOccupiedException();
             } else {
-                queuedEntities.Add((entity, pos));
+                entity.World = this;
+                queuedLocations[pos.y * width + pos.x] |= 0b1 << pos.plane;
+                queuedEntities.Add(entity, pos);
             }
         }
 
@@ -85,6 +89,9 @@
 
         public bool IsOccupied(Vec3 vec) {
             if (!ValidPos(vec)) return false;
+            int field = 0b1 << vec.plane;
+            int loc = queuedLocations[vec.y * width + vec.x];
+            if ((field & loc) == field) return true;
             return tiles[vec.y * width + vec.x].planes[vec.plane] != null;
         }
 
@@ -122,24 +129,33 @@
                 system.Step();
             }
 
+            _entities.Clear();
             foreach (Entity entity in entities) {
                 entity.FixedUpdate();
                 entity.Step();
                 if (!entity.remove) _entities.Add(entity);
+                else GetTile(entity.Pos).planes[entity.Pos.plane] = null;
             }
-            List<Entity> temp = _entities;
+            HashSet<Entity> temp = _entities;
             _entities = entities;
             entities = temp;
-            _entities.Clear();
 
-            foreach (var spawn in queuedEntities) {
-                spawn.e.World = this;
-                if (spawn.pos.plane == (int)Tile.Plane.plant) {
-                    spawn.e.plant = true;
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    queuedLocations[y * width + x] = 0;
                 }
-                spawn.e.Pos = spawn.pos;
-                GetTile(spawn.e.Pos).planes[spawn.e.Pos.plane] = spawn.e;
-                entities.Add(spawn.e);
+            }
+
+            foreach (var kvp in queuedEntities) {
+                if (kvp.Value.plane == (int)Tile.Plane.plant) {
+                    kvp.Key.plant = true;
+                }
+                if (IsOccupied(kvp.Key.Pos)) {
+                    var bruh = GetTile(kvp.Key.Pos).planes[kvp.Key.Pos.plane];
+                    throw new AlreadyOccupiedException();
+                }
+                kvp.Key.Pos = kvp.Value;
+                entities.Add(kvp.Key);
             }
             queuedEntities.Clear();
 
