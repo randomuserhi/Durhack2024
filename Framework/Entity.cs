@@ -6,6 +6,9 @@ namespace Biosphere {
         public Simulation World;
 #pragma warning restore CS8618
 
+        public bool remove = false;
+        public bool plant = false;
+
         public Tile tile => World.GetTile(pos);
 
         public abstract string Type { get; }
@@ -33,7 +36,10 @@ namespace Biosphere {
         public Vec3 Pos {
             get { return pos; }
             set {
-                if (value.plane < 0 || value.plane > 3 || value.x < 0 || value.x > World.width - 1 || value.y < 0 || value.y > World.height - 1) {
+                if (!plant && !World.TraversablePos(value)) {
+                    return;
+                }
+                if (plant && !World.ValidPos(value)) {
                     return;
                 }
                 if (IsOccupied(value)) {
@@ -60,7 +66,7 @@ namespace Biosphere {
             return ref nodes![pos.y * World.width + pos.x];
         }
         private SortedSet<(float, Vec3)> openList = new SortedSet<(float, Vec3)>(Comparer<(float, Vec3)>.Create((a, b) => a.Item1.CompareTo(b.Item1)));
-        public bool TryPathTo(out Vec3 dir, Vec3 goal, Func<Tile, bool> condition, int depth = 5) {
+        public bool TryPathTo(out Vec3 dir, Vec3 goal, Func<Tile, bool>? condition = null, int depth = 5) {
             if (pos.x == goal.x && pos.y == goal.y) {
                 dir = Vec3.zero;
                 return true;
@@ -127,7 +133,7 @@ namespace Biosphere {
 
                             // If the successor is already on the closed
                             // list or if it is blocked, then ignore it.
-                            if (!nP.closed && condition(World.GetTile(newPos))) {
+                            if (!nP.closed && (condition == null || condition(World.GetTile(newPos)))) {
                                 float gNew = GetNode(current).g + (i == 0 || j == 0 ? 1.0f : 1.4f);
                                 float hNew = Math.Abs(newPos.x - goal.x) + Math.Abs(newPos.y - goal.y);
                                 float fNew = gNew + hNew;
@@ -209,8 +215,11 @@ namespace Biosphere {
             return entityStates.ContainsKey(stateName);
         }
 
-        // Runs every tick
+        // Runs every delay
         protected abstract void Update();
+
+        // Runs every tick
+        public virtual void FixedUpdate() { }
 
         public virtual void Write(ByteBuffer buffer) { }
     }

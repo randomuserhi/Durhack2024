@@ -6,6 +6,8 @@
         public List<System> systems = new();
         public List<Rule> rules = new();
         public List<Entity> entities = new();
+        private List<Entity> _entities = new();
+        private List<(Entity e, Vec3 pos)> queuedEntities = new();
 
         public readonly int height;
         public readonly int width;
@@ -61,16 +63,12 @@
             if (IsOccupied(pos)) {
                 throw new AlreadyOccupiedException();
             } else {
-                entity.World = this;
-                entity.Pos = pos;
-                GetTile(entity.Pos).planes[entity.Pos.plane] = entity;
-                entities.Add(entity);
+                queuedEntities.Add((entity, pos));
             }
         }
 
         public void RemoveEntity<T>(T entity) where T : Entity {
-            GetTile(entity.Pos).planes[entity.Pos.plane] = null;
-            entities.Remove(entity);
+            entity.remove = true;
         }
 
         public Tile GetTile(Vec3 vec) {
@@ -78,11 +76,15 @@
         }
 
         public bool ValidPos(Vec3 vec) {
-            return vec.x > 0 && vec.y > 0 && vec.x <= width && vec.y <= height && vec.plane >= 0 && vec.plane < 4;
+            return vec.x >= 0 && vec.y >= 0 && vec.x < width && vec.y < height && vec.plane >= 0 && vec.plane < Tile.NumPlanes;
+        }
+
+        public bool TraversablePos(Vec3 vec) {
+            return vec.x >= 0 && vec.y >= 0 && vec.x < width && vec.y < height && vec.plane >= 0 && vec.plane < Tile.TraversablePlanes;
         }
 
         public bool IsOccupied(Vec3 vec) {
-            if (!ValidPos(vec)) return true;
+            if (!ValidPos(vec)) return false;
             return tiles[vec.y * width + vec.x].planes[vec.plane] != null;
         }
 
@@ -117,12 +119,29 @@
             }
 
             foreach (System system in systems) {
-                system.Update();
+                system.Step();
             }
 
             foreach (Entity entity in entities) {
+                entity.FixedUpdate();
                 entity.Step();
+                if (!entity.remove) _entities.Add(entity);
             }
+            List<Entity> temp = _entities;
+            _entities = entities;
+            entities = temp;
+            _entities.Clear();
+
+            foreach (var spawn in queuedEntities) {
+                spawn.e.World = this;
+                if (spawn.pos.plane == (int)Tile.Plane.plant) {
+                    spawn.e.plant = true;
+                }
+                spawn.e.Pos = spawn.pos;
+                GetTile(spawn.e.Pos).planes[spawn.e.Pos.plane] = spawn.e;
+            }
+            queuedEntities.Clear();
+
             stepCount++;
         }
 

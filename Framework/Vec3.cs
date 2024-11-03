@@ -1,7 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 
 namespace Biosphere {
-    public struct Vec3 {
+    public struct Vec3 : IEquatable<Vec3> {
         public int x;
         public int y;
         public int plane;
@@ -14,7 +14,7 @@ namespace Biosphere {
         public static Vec3 transcend = new Vec3(0, 0, 1);
         public static Vec3 descend = new Vec3(0, 0, -1);
 
-        public Vec3(int x, int y, int plane) {
+        public Vec3(int x, int y, int plane = 0) {
             this.x = x;
             this.y = y;
             this.plane = plane;
@@ -31,6 +31,22 @@ namespace Biosphere {
 
         public static Vec3 operator *(Vec3 vec1, int multi) {
             return new Vec3(vec1.x * multi, vec1.y * multi, vec1.plane * multi);
+        }
+
+        public static bool operator ==(Vec3 a, Vec3 b) {
+            return a.x == b.x && a.y == b.y && a.plane == b.plane;
+        }
+        public static bool operator !=(Vec3 a, Vec3 b) {
+            return !(a == b);
+        }
+
+        public override bool Equals(object? obj) => obj is Vec3 other && this.Equals(other);
+
+        public bool Equals(Vec3 p) => x == p.x && y == p.y && plane == p.plane;
+
+
+        public override int GetHashCode() {
+            return HashCode.Combine(x, y, plane);
         }
 
         /*
@@ -52,7 +68,7 @@ namespace Biosphere {
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public int MagSqrd() {
-            return (x * x) + (y * y);
+            return (x * x) + (y * y) + (plane * plane);
         }
     }
 }

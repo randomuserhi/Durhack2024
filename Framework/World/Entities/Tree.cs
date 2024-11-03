@@ -1,10 +1,8 @@
-﻿using System.Runtime.Serialization;
-
-namespace Biosphere {
+﻿namespace Biosphere {
     public class Tree : Entity {
 
         private int growthState;
-        private static string[] states = ["sprout", "sapling", "Mature Tree", "Ancient Tree", "Decaying Tree"];
+        private static string[] states = ["sprout", "sapling", "mature", "ancient", "decaying"];
 
         public override string Type => "Tree";
 
@@ -19,7 +17,7 @@ namespace Biosphere {
                 if (growthState == 50) {
                     World.RemoveEntity(this);
                 }
-                state = states[growthState / 10];
+                state = states[growthState / 10 - 1];
             }
         }
     }

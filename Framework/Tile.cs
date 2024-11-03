@@ -34,8 +34,11 @@
             underground = 0,
             surface = 1,
             foliage = 2,
-            sky = 3
+            sky = 3,
+            plant = 4
         }
+        public const int TraversablePlanes = 4;
+        public const int NumPlanes = 5;
 
         // Dictionary to represent all the states of a given tile
         // 0 is false, 1 is true, above 1 is true and a variable specific to the state e.g. intenstity
@@ -69,7 +72,7 @@
         }
 
         // Planes array for storing what entities are on a given plane in a tile. Refer to Plane enum
-        public Entity?[] planes = [null, null, null, null];
+        public Entity?[] planes = new Entity?[NumPlanes] { null, null, null, null, null };
 
         public void Write(ByteBuffer buffer) {
             BitHelper.WriteBytes(tileStates.Count, buffer);

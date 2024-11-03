@@ -2,7 +2,9 @@
     public class Bird : Entity {
 
         private int staminaCount = 20;
+        private int fleeCount = 0;
         private Entity? pursuing = null;
+        private Entity? fleeing = null;
 
         public override string Type => "Bird";
 
@@ -20,7 +22,23 @@
         }
 
         private void Fleeing() {
-            // fleeing if detects a predator. can fly for a bit regardless of energy
+            --fleeCount;
+            if (fleeing != null) {
+                int x_dif = Pos.x - fleeing.Pos.x;
+                int y_dif = Pos.y - fleeing.Pos.y;
+                if (Math.Abs(x_dif) > Math.Abs(y_dif)) {
+                    Pos += new Vec3(Math.Sign(x_dif) * 1, 0, Rand.Int(0, 2));
+                } else {
+                    Pos += new Vec3(0, Math.Sign(y_dif) * 1, Rand.Int(0, 2));
+                }
+                if (fleeCount <= 0) {
+                    if (staminaCount > 0) {
+                        state = "wandering";
+                    } else {
+                        state = "seeking";
+                    }
+                }
+            }
             delay = 1;
         }
 
@@ -33,10 +51,19 @@
         }
 
         private void Pursuing() {
-            // a* for routing to worms
             delay = 1;
-
-            // if catches worm:
+            if (pursuing != null) {
+                if (Pos.plane > 1) {
+                    Pos += Vec3.descend;
+                }
+                if (TryPathTo(out Vec3 dir, pursuing.Pos)) {
+                    if (Pos + dir == pursuing.Pos && Pos.plane == pursuing.Pos.plane) {
+                        World.RemoveEntity(pursuing);
+                        pursuing = null;
+                    }
+                    Pos += dir;
+                }
+            }
             state = "wandering";
             staminaCount = 20;
         }
@@ -70,9 +97,43 @@
             }
         }
 
+        private void CheckDog() {
+            Entity? closestEntity = null;
+            float closestDist = float.PositiveInfinity;
+
+            foreach (Entity entity in World.entities) {
+                if (entity.Type != "Dog" || entity.Pos.plane == 0) {
+                    continue;
+                }
+
+                float dist = (entity.Pos - Pos).Mag();
+
+                if (closestEntity != null) {
+                    if (dist < closestDist) {
+                        closestDist = dist;
+                        closestEntity = entity;
+                        state = "fleeing";
+                        fleeing = closestEntity;
+                        fleeCount = 4;
+                    }
+
+                } else if (dist < 4) {
+                    closestDist = dist;
+                    closestEntity = entity;
+                    state = "fleeing";
+                    fleeing = closestEntity;
+                    fleeCount = 4;
+
+                } else {
+                    state = "seeking";
+                }
+            }
+        }
+
         protected override void Update() {
             if (state == "seeking") {
                 FindWorm();
+                CheckDog();
             }
 
             switch (state) {

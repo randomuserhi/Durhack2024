@@ -22,6 +22,7 @@
         private void Resting() {
             delay = 20;
             staminaCount = 10;
+            state = "wandering";
         }
 
         private void Idle() {
@@ -34,15 +35,23 @@
         }
 
         private void Pursuing() {
-            // a* for chasing
+            if (pursuing != null) {
+                if (TryPathTo(out Vec3 dir, pursuing.Pos)) {
+                    if (Pos + dir == pursuing.Pos && Pos.plane == pursuing.Pos.plane) {
+                        World.RemoveEntity(pursuing);
+                        pursuing = null;
+                    }
+                    Pos += dir;
+                }
+            }
         }
 
-        private void FindEntity() {
+        private void FindBird() {
             Entity? closestEntity = null;
             float closestDist = float.PositiveInfinity;
 
             foreach (Entity entity in World.entities) {
-                if (entity.Type == "Dog" || entity.Pos.plane != this.Pos.plane) {
+                if (entity.Type != "Bird" || entity.Pos.plane != this.Pos.plane) {
                     continue;
                 }
 
@@ -53,12 +62,14 @@
                         closestDist = dist;
                         closestEntity = entity;
                         state = "pursuing";
+                        pursuing = closestEntity;
                     }
 
                 } else if (dist < 5) {
                     closestDist = dist;
                     closestEntity = entity;
                     state = "pursuing";
+                    pursuing = closestEntity;
 
                 } else {
                     if (staminaCount <= 4) {
@@ -72,7 +83,7 @@
 
         protected override void Update() {
             if (state != "resting") {
-                FindEntity();
+                FindBird();
             }
 
             switch (state) {

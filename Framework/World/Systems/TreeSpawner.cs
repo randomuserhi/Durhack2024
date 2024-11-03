@@ -1,45 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.ExceptionServices;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Biosphere {
+﻿namespace Biosphere {
     internal class TreeSpawner : System {
 
         private float chance = 0.2f;
 
-        public TreeSpawner() : base() { }
+        public TreeSpawner() : base() {
+            delay = 10;
+        }
 
-        public override void Update() {
+        protected override void Update() {
             foreach (Tile tile in World.tiles) {
-                chance = 0.2f;
-                if (tile.planes[(int)Tile.Plane.foliage] != null) {
+                chance = 0.01f;
+                if (tile.planes[(int)Tile.Plane.plant] == null) {
                     if (tile.HasState("fire")) {
                         continue;
                     }
-                    if (World.IsOccupied(new Vec3(tile.pos.x, tile.pos.y + World.width, 2))) {
+                    if (World.IsOccupied(new Vec3(tile.pos.x, tile.pos.y + World.width, (int)Tile.Plane.plant))) {
                         chance += 0.1f;
                     }
-                    if (World.IsOccupied(new Vec3(tile.pos.x - 1, tile.pos.y, 2))) {
+                    if (World.IsOccupied(new Vec3(tile.pos.x - 1, tile.pos.y, (int)Tile.Plane.plant))) {
                         chance += 0.1f;
                     }
-                    if (World.IsOccupied(new Vec3(tile.pos.x + 1, tile.pos.y, 2))) {
+                    if (World.IsOccupied(new Vec3(tile.pos.x + 1, tile.pos.y, (int)Tile.Plane.plant))) {
                         chance += 0.1f;
                     }
-                    if (World.IsOccupied(new Vec3(tile.pos.x, tile.pos.y - World.width, 2))) {
+                    if (World.IsOccupied(new Vec3(tile.pos.x, tile.pos.y - World.width, (int)Tile.Plane.plant))) {
                         chance += 0.1f;
                     }
 
                     var randomValue = Rand.Float(0, 1);
                     if (randomValue <= chance) {
-                        World.AddEntity(new Tree(), new Vec3(tile.pos.x, tile.pos.y, 2));
+                        Console.WriteLine($"SPAWNED A TREE AT {tile.pos.x} {tile.pos.y}");
+                        World.AddEntity(new Tree(), new Vec3(tile.pos.x, tile.pos.y, (int)Tile.Plane.plant));
                     }
                 }
             }
-
         }
-
-
     }
+}

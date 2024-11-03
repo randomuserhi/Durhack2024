@@ -5,6 +5,16 @@
 #pragma warning restore CS8618
 
         // Runs once every tick
-        public abstract void Update();
+        protected abstract void Update();
+
+        public int delay = 0;
+        private int _delay = 0;
+        public void Step() {
+            if (_delay <= 0) {
+                _delay = delay;
+                Update();
+            }
+            --_delay;
+        }
     }
 }
