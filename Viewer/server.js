@@ -4,7 +4,7 @@ const path = require('path');
 
 const hostname = '127.0.0.1';
 const port = 3000;
-const baseDir = path.join(__dirname, 'src');
+const baseDir = path.join(__dirname, 'build');
 
 const server = http.createServer((req, res) => {
     let filePath = path.join(baseDir, req.url === '/' ? 'index.html' : req.url);

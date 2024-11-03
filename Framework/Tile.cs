@@ -9,7 +9,7 @@
     }
 
     public class StringState : BufferWriteable {
-        string value;
+        string value = string.Empty;
 
         public void Write(ByteBuffer buffer) {
             BitHelper.WriteBytes(value, buffer);
