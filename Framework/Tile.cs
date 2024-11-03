@@ -1,7 +1,7 @@
 ﻿namespace Biosphere {
 
     public class IntState : BufferWriteable {
-        int value;
+        public int value;
 
         public void Write(ByteBuffer buffer) {
             BitHelper.WriteBytes(value, buffer);
@@ -9,7 +9,7 @@
     }
 
     public class StringState : BufferWriteable {
-        string value = string.Empty;
+        public string value = string.Empty;
 
         public void Write(ByteBuffer buffer) {
             BitHelper.WriteBytes(value, buffer);
@@ -17,7 +17,7 @@
     }
 
     public class FloatState : BufferWriteable {
-        float value;
+        public float value;
 
         public void Write(ByteBuffer buffer) {
             BitHelper.WriteBytes(value, buffer);
