@@ -159,7 +159,8 @@
             }
 
             // Write tile and entities
-            BitHelper.WriteBytes(size, buffer);
+            BitHelper.WriteBytes(width, buffer);
+            BitHelper.WriteBytes(height, buffer);
             foreach (Tile tile in tiles) {
                 BitHelper.WriteBytes(tile, buffer);
             }

@@ -9,7 +9,9 @@
             sim.AddEntity(dog, new Vec3(2, 2, 1));
             sim.AddEntity(bird, new Vec3(2, 5, 3));
             sim.AddEntity(worm, new Vec3(2, 2, 0));
+            sim.AddSystem(new CloudSpawner());
             sim.AddSystem(new TreeSpawner());
+            sim.AddSystem(new WormSpawner());
             for (int i = 0; i < 1000; i++) {
                 Console.WriteLine($"STEP!!!! {i}");
                 Console.WriteLine($"dog: {dog.Pos.x} {dog.Pos.y} {dog.Pos.plane} {dog.remove}");
