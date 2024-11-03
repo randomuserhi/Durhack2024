@@ -41,11 +41,13 @@ namespace Server {
             switch (type) {
                 case "get":
 
+                    int worldID = BitHelper.ReadInt(e.RawData, ref i);
+
                     if (currentTask == null) {
 
                         // Check what the content of the message is - need to examine e.data
-                        if (Server.worldList.ContainsKey(1)) {
-                            Server.clientWorlds.Add(ID, 1);
+                        if (Server.worldList.ContainsKey(worldID)) {
+                            Server.clientWorlds.Add(ID, worldID);
                         } else {
                             while (!added) {
                                 if (!Server.worldList.ContainsKey(temp)) {
