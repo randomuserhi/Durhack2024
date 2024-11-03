@@ -77,7 +77,12 @@
             return tiles[vec.y * width + vec.x];
         }
 
+        public bool ValidPos(Vec3 vec) {
+            return vec.x > 0 && vec.y > 0 && vec.x <= width && vec.y <= height && vec.plane >= 0 && vec.plane < 4;
+        }
+
         public bool IsOccupied(Vec3 vec) {
+            if (!ValidPos(vec)) return true;
             return tiles[vec.y * width + vec.x].planes[vec.plane] != null;
         }
 
