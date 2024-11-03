@@ -139,6 +139,7 @@
                 }
                 spawn.e.Pos = spawn.pos;
                 GetTile(spawn.e.Pos).planes[spawn.e.Pos.plane] = spawn.e;
+                entities.Add(spawn.e);
             }
             queuedEntities.Clear();
 

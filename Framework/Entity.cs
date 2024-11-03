@@ -8,6 +8,7 @@ namespace Biosphere {
 
         public bool remove = false;
         public bool plant = false;
+        public int energy = 20;
 
         public Tile tile => World.GetTile(pos);
 

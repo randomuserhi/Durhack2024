@@ -12,11 +12,10 @@
             sim.AddSystem(new CloudSpawner());
             sim.AddSystem(new TreeSpawner());
             sim.AddSystem(new WormSpawner());
+            sim.AddSystem(new BirdSpawner());
+            sim.AddSystem(new DogSpawner());
             for (int i = 0; i < 1000; i++) {
                 Console.WriteLine($"STEP!!!! {i}");
-                Console.WriteLine($"dog: {dog.Pos.x} {dog.Pos.y} {dog.Pos.plane} {dog.remove}");
-                Console.WriteLine($"worm: {worm.Pos.x} {worm.Pos.y} {worm.Pos.plane} {worm.remove}");
-                Console.WriteLine($"bird: {bird.Pos.x} {bird.Pos.y} {bird.Pos.plane} {bird.remove}");
                 sim.Step();
             }
         }

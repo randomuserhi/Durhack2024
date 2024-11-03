@@ -11,28 +11,28 @@
         protected override void Update() {
             delay = Rand.Int(10, 31);
             foreach (Tile tile in World.tiles) {
-                chance = 0.05f;
+                chance = 0.01f;
                 if (tile.planes[(int)Tile.Plane.underground] == null) {
                     if (tile.HasState("fire")) {
                         continue;
                     }
                     if (World.IsOccupied(new Vec3(tile.pos.x, tile.pos.y + World.width, (int)Tile.Plane.plant))) {
-                        chance += 0.1f;
+                        chance += 0.005f;
                     }
                     if (World.IsOccupied(new Vec3(tile.pos.x - 1, tile.pos.y, (int)Tile.Plane.plant))) {
-                        chance += 0.1f;
+                        chance += 0.005f;
                     }
                     if (World.IsOccupied(new Vec3(tile.pos.x + 1, tile.pos.y, (int)Tile.Plane.plant))) {
-                        chance += 0.1f;
+                        chance += 0.005f;
                     }
                     if (World.IsOccupied(new Vec3(tile.pos.x, tile.pos.y - World.width, (int)Tile.Plane.plant))) {
-                        chance += 0.1f;
+                        chance += 0.005f;
                     }
 
                     var randomValue = Rand.Float(0, 1);
                     if (randomValue <= chance) {
                         Console.WriteLine($"SPAWNED A worm AT {tile.pos.x} {tile.pos.y}");
-                        World.AddEntity(new Tree(), new Vec3(tile.pos.x, tile.pos.y, (int)Tile.Plane.underground));
+                        World.AddEntity(new Worm(), new Vec3(tile.pos.x, tile.pos.y, (int)Tile.Plane.underground));
                     }
                 }
             }

@@ -1,7 +1,7 @@
 ﻿namespace Biosphere {
     public class Worm : Entity {
 
-        private int staminaCount = 5;
+        private int energy = 5;
         private Entity? pursuing = null;
 
         public override string Type => "Worm";
@@ -11,8 +11,8 @@
         }
 
         private void Wandering() {
-            --staminaCount;
-            if (staminaCount <= 0) {
+            --energy;
+            if (energy <= 0) {
                 if (Rand.Int(0, 2) == 0) {
                     state = "chilling";
                 } else {
@@ -25,14 +25,14 @@
 
         private void Chilling() {
             delay = 20;
-            staminaCount = 5;
+            energy = 5;
             state = "wandering";
         }
 
         private void Sunbathing() {
             Pos += Vec3.transcend;
             delay = 15;
-            staminaCount = 5;
+            energy = 5;
             state = "wandering";
         }
 

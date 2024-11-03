@@ -1,7 +1,7 @@
 ﻿namespace Biosphere {
     public class Dog : Entity {
 
-        private int staminaCount = 10;
+        private int energy = 10;
         private Entity? pursuing = null;
 
         public override string Type => "Dog";
@@ -11,8 +11,8 @@
         }
 
         private void Wandering() {
-            --staminaCount;
-            if (staminaCount <= 4) {
+            --energy;
+            if (energy <= 4) {
                 state = "idle";
             }
             delay = 2;
@@ -21,13 +21,13 @@
 
         private void Resting() {
             delay = 20;
-            staminaCount = 10;
+            energy = 10;
             state = "wandering";
         }
 
         private void Idle() {
-            --staminaCount;
-            if (staminaCount <= 0) {
+            --energy;
+            if (energy <= 0) {
                 state = "resting";
             }
             delay = 4;
@@ -72,7 +72,7 @@
                     pursuing = closestEntity;
 
                 } else {
-                    if (staminaCount <= 4) {
+                    if (energy <= 4) {
                         state = "idle";
                     } else {
                         state = "wandering";

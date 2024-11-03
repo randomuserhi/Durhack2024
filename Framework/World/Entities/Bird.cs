@@ -1,7 +1,7 @@
 ﻿namespace Biosphere {
     public class Bird : Entity {
 
-        private int staminaCount = 20;
+        public int energy = 20;
         private int fleeCount = 0;
         private Entity? pursuing = null;
         private Entity? fleeing = null;
@@ -13,8 +13,8 @@
         }
 
         private void Wandering() {
-            --staminaCount;
-            if (staminaCount <= 0) {
+            --energy;
+            if (energy <= 0) {
                 state = "seeking";
             }
             delay = 1;
@@ -32,7 +32,7 @@
                     Pos += new Vec3(0, Math.Sign(y_dif) * 1, Rand.Int(0, 2));
                 }
                 if (fleeCount <= 0) {
-                    if (staminaCount > 0) {
+                    if (energy > 0) {
                         state = "wandering";
                     } else {
                         state = "seeking";
@@ -65,7 +65,7 @@
                 }
             }
             state = "wandering";
-            staminaCount = 20;
+            energy = 20;
         }
 
         private void FindWorm() {
