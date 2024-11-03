@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "lOVkKMJgZ6BUrHYbQVIT/P37I1X6zNcfTqf6IBV5wt23U3Cl7V3QAsXxMY57vgypp/CoZqv47PIkExw3WzM3Cg==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Anivarth\\source\\repos\\randomuserhi\\Durhack2024\\Test Client\\Test Client.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Anivarth\\.nuget\\packages\\websocketsharp.core\\1.0.0\\websocketsharp.core.1.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

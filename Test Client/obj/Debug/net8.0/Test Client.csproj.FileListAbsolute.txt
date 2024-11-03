@@ -1,0 +1,18 @@
+C:\Users\Anivarth\source\repos\randomuserhi\Durhack2024\Test Client\bin\Debug\net8.0\Test Client.exe
+C:\Users\Anivarth\source\repos\randomuserhi\Durhack2024\Test Client\bin\Debug\net8.0\Test Client.deps.json
+C:\Users\Anivarth\source\repos\randomuserhi\Durhack2024\Test Client\bin\Debug\net8.0\Test Client.runtimeconfig.json
+C:\Users\Anivarth\source\repos\randomuserhi\Durhack2024\Test Client\bin\Debug\net8.0\Test Client.dll
+C:\Users\Anivarth\source\repos\randomuserhi\Durhack2024\Test Client\bin\Debug\net8.0\Test Client.pdb
+C:\Users\Anivarth\source\repos\randomuserhi\Durhack2024\Test Client\bin\Debug\net8.0\websocket-sharp-core.dll
+C:\Users\Anivarth\source\repos\randomuserhi\Durhack2024\Test Client\obj\Debug\net8.0\Test Client.csproj.AssemblyReference.cache
+C:\Users\Anivarth\source\repos\randomuserhi\Durhack2024\Test Client\obj\Debug\net8.0\Test Client.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Anivarth\source\repos\randomuserhi\Durhack2024\Test Client\obj\Debug\net8.0\Test Client.AssemblyInfoInputs.cache
+C:\Users\Anivarth\source\repos\randomuserhi\Durhack2024\Test Client\obj\Debug\net8.0\Test Client.AssemblyInfo.cs
+C:\Users\Anivarth\source\repos\randomuserhi\Durhack2024\Test Client\obj\Debug\net8.0\Test Client.csproj.CoreCompileInputs.cache
+C:\Users\Anivarth\source\repos\randomuserhi\Durhack2024\Test Client\obj\Debug\net8.0\Test Client.sourcelink.json
+C:\Users\Anivarth\source\repos\randomuserhi\Durhack2024\Test Client\obj\Debug\net8.0\Test Client.csproj.CopyComplete
+C:\Users\Anivarth\source\repos\randomuserhi\Durhack2024\Test Client\obj\Debug\net8.0\Test Client.dll
+C:\Users\Anivarth\source\repos\randomuserhi\Durhack2024\Test Client\obj\Debug\net8.0\refint\Test Client.dll
+C:\Users\Anivarth\source\repos\randomuserhi\Durhack2024\Test Client\obj\Debug\net8.0\Test Client.pdb
+C:\Users\Anivarth\source\repos\randomuserhi\Durhack2024\Test Client\obj\Debug\net8.0\Test Client.genruntimeconfig.cache
+C:\Users\Anivarth\source\repos\randomuserhi\Durhack2024\Test Client\obj\Debug\net8.0\ref\Test Client.dll
