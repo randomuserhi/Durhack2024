@@ -113,6 +113,13 @@ export const Display = () => {
     BitHelper.writeString(code, test);
     App.ws.send(BitHelper.GetBytes(test));
 
+    App.burn.addEventListener("click", () => {
+        const test = new ByteStream();
+        BitHelper.writeString("burn", test);
+        App.ws.send(BitHelper.GetBytes(test));
+        console.log("burh");
+    });
+
     return dom;
 };
 

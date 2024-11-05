@@ -14,6 +14,14 @@
         }
 
         protected override void Update() {
+            if (World.GetTile(Pos).HasState("fire")) {
+                if (growthState < 3) {
+                    growthState = 3;
+                    clock = 0;
+                }
+                clock *= 2;
+            }
+
             ++clock;
             if (clock >= time[growthState]) {
                 ++growthState;

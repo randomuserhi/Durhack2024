@@ -9,7 +9,7 @@ states.set("sprout", LoadImage("./images/entities/sprout.png"));
 states.set("sapling", LoadImage("./images/entities/sapling.png"));
 states.set("mature", LoadImage("./images/entities/mature.png"));
 states.set("ancient", LoadImage("./images/entities/ancient.png"));
-states.set("decayed", LoadImage("./images/entities/decayed.png"));
+states.set("decaying", LoadImage("./images/entities/decayed.png"));
 
 export class Tree extends Entity {
     sprite: Sprite;

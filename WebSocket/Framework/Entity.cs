@@ -185,6 +185,7 @@ namespace Biosphere {
 
             dir.x -= pos.x;
             dir.y -= pos.y;
+            dir.plane = 0;
 
             return solved;
         }

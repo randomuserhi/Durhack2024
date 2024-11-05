@@ -38,8 +38,19 @@ namespace Server {
             int i = 0;
 
             string type = BitHelper.ReadString(e.RawData, ref i);
+            Console.WriteLine(type);
 
             switch (type) {
+            case "burn": {
+                Console.WriteLine("FIRE");
+
+                if (instance == null) return;
+
+                int index = Rand.Int(0, instance.sim.tiles.Length);
+                instance.sim.tiles[index].AddState("fire", new IntState() { value = 1 });
+                instance.sim.tiles[index].AddState("temp", new IntState() { value = 90 });
+            }
+            break;
             case "get": {
                 if (instance != null) return;
 

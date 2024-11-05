@@ -12,7 +12,11 @@
             sim.AddRule(new Fire());
             sim.AddRule(new Rain());
 
+            sim.tiles[0].AddState("fire", new IntState() { value = 1 });
+            sim.tiles[0].AddState("temp", new IntState() { value = 60 });
+
             while (true) {
+
                 sim.Step();
             }
         }

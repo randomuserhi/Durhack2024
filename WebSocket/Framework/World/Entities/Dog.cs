@@ -14,7 +14,7 @@
         private void Wandering() {
             --energy;
             if (energy <= 0) {
-                state = "resting";
+                nextstate = "resting";
             }
             delay = 4;
             Pos += new Vec3(Rand.Int(-1, 2), Rand.Int(-1, 2), 0);
@@ -28,22 +28,76 @@
 
         private void Pursuing() {
             delay = 2;
-            if (pursuing != null) {
-                if (TryPathTo(out Vec3 dir, pursuing.Pos)) {
-                    if (Pos + dir == pursuing.Pos && Pos.plane == pursuing.Pos.plane || Pos.plane == pursuing.Pos.plane - 1) {
-                        World.RemoveEntity(pursuing);
-                        hunger += 75;
-                        nextstate = "eat";
-                        pursuing = null;
-                    }
-                    Pos += dir;
+            if (pursuing != null && !pursuing.remove) {
+                TryPathTo(out Vec3 dir, pursuing.Pos, (Tile t) => !World.IsOccupied(t.pos));
+                Pos += dir;
+                if (Pos == pursuing.Pos && (pursuing.Pos.plane != (int)Tile.Plane.sky)) {
+                    World.RemoveEntity(pursuing);
+                    hunger += 30;
+                    state = "eat";
+                    pursuing = null;
+                } else if ((Pos + dir) == pursuing.Pos && (pursuing.Pos.plane != (int)Tile.Plane.sky)) {
+                    World.RemoveEntity(pursuing);
+                    hunger += 30;
+                    state = "eat";
+                    pursuing = null;
                 }
+            } else {
+                pursuing = null;
+                state = "wandering";
+                Wandering();
+                FindBird();
             }
         }
 
+        private int quota = 2;
         private void Eat() {
             delay = 20;
             nextstate = "wandering";
+
+            if (--quota <= 0) {
+                quota = 2;
+                Vec3 pos = Pos + new Vec3(1, 0, 0);
+                if (!World.IsOccupied(pos) && World.ValidPos(pos)) {
+                    World.AddEntity(new Dog(), pos);
+                    return;
+                }
+                pos = Pos + new Vec3(-1, 0, 0);
+                if (!World.IsOccupied(pos) && World.ValidPos(pos)) {
+                    World.AddEntity(new Dog(), pos);
+                    return;
+                }
+                pos = Pos + new Vec3(0, 1, 0);
+                if (!World.IsOccupied(pos) && World.ValidPos(pos)) {
+                    World.AddEntity(new Dog(), pos);
+                    return;
+                }
+                pos = Pos + new Vec3(0, -1, 0);
+                if (!World.IsOccupied(pos) && World.ValidPos(pos)) {
+                    World.AddEntity(new Dog(), pos);
+                    return;
+                }
+                pos = Pos + new Vec3(1, 1, 0);
+                if (!World.IsOccupied(pos) && World.ValidPos(pos)) {
+                    World.AddEntity(new Dog(), pos);
+                    return;
+                }
+                pos = Pos + new Vec3(1, -1, 0);
+                if (!World.IsOccupied(pos) && World.ValidPos(pos)) {
+                    World.AddEntity(new Dog(), pos);
+                    return;
+                }
+                pos = Pos + new Vec3(-1, 1, 0);
+                if (!World.IsOccupied(pos) && World.ValidPos(pos)) {
+                    World.AddEntity(new Dog(), pos);
+                    return;
+                }
+                pos = Pos + new Vec3(-1, -1, 0);
+                if (!World.IsOccupied(pos) && World.ValidPos(pos)) {
+                    World.AddEntity(new Dog(), pos);
+                    return;
+                }
+            }
         }
 
         private void FindBird() {
@@ -61,10 +115,12 @@
                     if (dist < closestDist) {
                         closestDist = dist;
                         closestEntity = entity;
-                        pursuing = closestEntity;
                     }
+                } else {
+                    closestEntity = entity;
                 }
             }
+            pursuing = closestEntity;
         }
 
         protected override void Update() {
@@ -72,14 +128,21 @@
                 FindBird();
             }
 
+            if (hunger > 0 && World.GetTile(Pos).HasState("fire")) {
+                delay = 1;
+                hunger /= 2;
+                Pos += new Vec3(Rand.Int(-1, 2), Rand.Int(-1, 2), 0);
+            }
+
             --hunger;
             if (hunger < 50 || (pursuing != null && (pursuing.Pos - Pos).Mag() < 30)) {
-                if (pursuing == null) {
-                    FindBird();
-                } else if (pursuing.remove == true) {
+                if (pursuing != null && pursuing.remove == true) {
                     pursuing = null;
                 }
-                state = "pursuing";
+                if (pursuing == null) {
+                    FindBird();
+                }
+                if (pursuing != null) state = "pursuing";
             }
 
             if (hunger <= 0) {
@@ -102,6 +165,9 @@
                 break;
             case "pursuing":
                 Pursuing();
+                break;
+            case "eat":
+                Eat();
                 break;
             }
         }

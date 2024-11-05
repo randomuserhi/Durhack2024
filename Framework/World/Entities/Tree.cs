@@ -14,16 +14,24 @@
         }
 
         protected override void Update() {
-            ++clock;
-            if (clock >= time[growthState]) {
-                ++growthState;
-                clock = 0;
+            if (World.GetTile(Pos).HasState("fire")) {
+                if (growthState < 3) {
+                    growthState = 3;
+                    clock = 0;
+                }
+                clock += 10;
             }
 
             if (growthState > 4) {
                 World.RemoveEntity(this);
             } else {
                 state = states[growthState];
+            }
+
+            ++clock;
+            if (clock >= time[growthState]) {
+                ++growthState;
+                clock = 0;
             }
         }
     }

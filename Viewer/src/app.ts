@@ -77,6 +77,7 @@ export const App = (() => {
         ws: WebSocket;
         body: HTMLDivElement;
         button: HTMLButtonElement;
+        burn: HTMLButtonElement;
         code: Signal<string>;
     }
 
@@ -86,13 +87,14 @@ export const App = (() => {
     <div class=${style.wrapper}>
         <h1 style="text-align:center; color:#606C38; font-family:Georgia; font-size:3em;"><b>Biosphere</b></h1>
         <div style="width:100%; display: flex; align-items: center; justify-content: center;">
-            <div>
-                <button m-id="button" class="${style.button}">New</button>
+            <div style="display: flex; gap: 10px;">
+                <button m-id="button" class="${style.button}">New</button><button m-id="burn" class="${style.button}">Burn</button>
             </div>
         </div>
         <div class="${style.divider}">${code}</div>
+        <img src="./images/simon.png" style="height: 60%; position: absolute; top: 50%; left: 10px; transform: translate(0, -50%);"/>
+        <img src="./images/simon.png" style="height: 60%; position: absolute; top: 50%; right: 10px; transform: translate(0, -50%);"/>
         <div m-id="body" class=${style.body}>
-            
         </div>
     </div>
     `;
